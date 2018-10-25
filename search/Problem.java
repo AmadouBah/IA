@@ -1,9 +1,11 @@
 package search;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
@@ -30,6 +32,10 @@ public class Problem<State extends Searchable<State,Action>,Action> {
 		return initialState + "\n" + " V \n\n" + finalState;	
 	}
 	
+	/**
+	 * Parcours en largeur
+	 * @return le nombre de noeuds visités
+	 */
 	public int bfs(){
 		State current = this.initialState;
 		List<State> dejavu = new ArrayList<State>();
@@ -37,8 +43,9 @@ public class Problem<State extends Searchable<State,Action>,Action> {
 		List<Action> actions = new ArrayList<>();
 		avisiter.add(current);
 		int cpt=0;
-		System.out.println(current);
+		
 		System.out.println("debut de bfs!");
+		System.out.println(current);
 
 		while(!goal_test(current)) {
 			
@@ -55,13 +62,17 @@ public class Problem<State extends Searchable<State,Action>,Action> {
 			current = avisiter.get(0);
 			cpt++;
 		}
+		
+		System.out.println("fin de bfs!");
 		System.out.println(current);
-
 		System.out.println("nb noeuds visites:"+cpt );
 		return cpt;
 	}
 	
-	
+	/**
+	 * Parcours en profondeur
+	 * @return le nombre de noeuds visités
+	 */
 	public int dfs(){
 		State current = this.initialState;
 		List<State> dejavu = new ArrayList<State>();  //liste des etats deja visités
@@ -70,9 +81,10 @@ public class Problem<State extends Searchable<State,Action>,Action> {
 		avisiter.push(current);
 		
 		int cpt=0;
-		System.out.println(current);
 
 		System.out.println("debut de dfs !");
+		System.out.println(current);
+
 		while(!goal_test(current)) {
 			
 			actions = current.getActions();
@@ -90,24 +102,33 @@ public class Problem<State extends Searchable<State,Action>,Action> {
 			current = avisiter.peek();
 			cpt++;
 		}
+		
+		System.out.println("Fin de dfs !");
 		System.out.println(current);
-
 		System.out.println("nb noeuds visites : "+cpt);
 
 		return cpt;
     }
 	
-	public int getIndiceMin(List<Integer>list) {
-		int min =10000000;
-		int indiceMin = 0;
-		
-		for(Integer val: list) {
-			if(val<min) {
-				min=val;
-				indiceMin = list.indexOf(val);
+	
+	
+	/**
+	 * méthode retournant le State qui a le cout f minimum
+	 * @param avisiter liste contenant les states a comparer
+	 * @return le state de cout f minimum
+	 */
+	public State getStateMin(List<State>avisiter) {
+		State next=avisiter.get(0);
+		int min=next.getHeuristic()+next.getValueG();
+		int f;
+		for(State s: avisiter) {
+			f=s.getHeuristic()+s.getValueG();
+			if(f<min) {
+				min = f;
+				next = s;
 			}
 		}
-		return  indiceMin;
+		return next;
 	}
 	
 	
@@ -116,34 +137,32 @@ public class Problem<State extends Searchable<State,Action>,Action> {
 		State current = initialState;
 		List<State> avisiter = new ArrayList<>();
 		List<State> dejavu = new ArrayList<>();
-		List<Integer>couts = new ArrayList<>();
 		List<Action> actions = new ArrayList<>();
 		int cpt=0;
-		int f;
-		int indicemin;
+		
+		System.out.println("Debut de a*!");
+		System.out.println(current);
+		
 		while(!goal_test(current)) {
-			
 			actions = current.getActions();
+			
 			for(Action a : actions) {
 				State fils = current.execute(a);
 				
-				if(!dejavu.contains(fils)) {
-					fils.setValueG(fils.getValueG()+fils.getPredecessor().getValueG());
-					f=fils.getHeuristic()+fils.getValueG();
+				if(!dejavu.contains(fils) && !avisiter.contains(fils)) {
+					fils.setValueG(g.apply(fils));
+					fils.setValueH(h.apply(fils));
 					avisiter.add(fils);
-					couts.add(f);
 				}
 			}
-			
-			indicemin=this.getIndiceMin(couts);
 			dejavu.add(current);
 			avisiter.remove(current);
-			current = avisiter.get(indicemin);
-			
+			current = getStateMin(avisiter);
 			cpt++;
 		}
-		
-		
+		System.out.println("Fin de a*!");
+		System.out.println(current);
+		System.out.println("nb noeuds visites : "+cpt);
 		return cpt;
     }
 
