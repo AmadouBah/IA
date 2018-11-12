@@ -55,6 +55,14 @@ public class GraphColouring extends BinaryCSP<Integer> {
 		return res;
 	}
 	
+	public Variable<Integer> getVariable(String name){
+		for (Variable<Integer> v: vars)
+			if (v.getName().equals(name))
+				return v;
+		System.err.println("variable not found " + name);
+		return null;
+	}
+	
 	public static void main(String[] args){
 		GraphColouring gc = new GraphColouring("gc.txt");
 		System.out.println("Problem to solve: " + gc.constraints.size() +" constraints");
