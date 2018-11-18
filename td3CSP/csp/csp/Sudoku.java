@@ -189,8 +189,8 @@ public class Sudoku extends BinaryCSP<Digit> {
 	
 	
 	public static void main(String[] args){
-		testFull();
-		//testSimple();
+		//testFull();
+		testSimple();
 	}
 	
 	public static void testSimple(){
@@ -198,7 +198,7 @@ public class Sudoku extends BinaryCSP<Digit> {
 		Sudoku s = new Sudoku(game);
 		System.out.println(s);
 		long start = System.currentTimeMillis();
-		if (!s.forwardCheckAC3())
+		if (!s.backtrack())
 			System.out.println("failure!");
 		long finish = System.currentTimeMillis();
 		System.out.println("found in "+(finish-start) + "ms");
@@ -217,7 +217,7 @@ public class Sudoku extends BinaryCSP<Digit> {
 
 			s = new Sudoku(g);
 			start = System.currentTimeMillis();
-			if (!s.forwardCheck())
+			if (!s.backtrack())
 				System.out.println("failure!");
 			finish = System.currentTimeMillis();
 			res[0] = (finish - start);

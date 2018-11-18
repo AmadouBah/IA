@@ -73,7 +73,7 @@ public class GraphColouring extends BinaryCSP<Integer> {
 		for (int i=1;i<=numColors;i++)
 			colors.add(i);
 		while (cont){
-			if (gc.forwardCheckAC3()){
+			if (gc.backtrack()){
 				System.out.println("the graph can be colored with " + colors.size() + " colors");
 				cont = false;
 			}

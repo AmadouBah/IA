@@ -114,7 +114,7 @@ public class BinaryCSP<D> {
 	public D h3(Variable<D> var) {
 		D valres =null;
 		int cpt;
-		int min = 100000;
+		int min = 10000;
 		List<Variable<D>> voisins = this.getVoisins(var);
 		
 		for(D value : var.getPossibleValues()) {
@@ -134,15 +134,32 @@ public class BinaryCSP<D> {
 	 * bactrack algorhitm version 1 (sans heuristics..)
 	 * @return true or false
 	 */
-	public boolean forwardCheck() {
+	public boolean backtrack() {
+		if(vars.isEmpty())
+			return true;
 		
-		List<Variable<D>> listvar =vars;
-		Variable<D> current = listvar.remove(0);
-		
+		Variable<D> current = vars.remove(0);
 		for(D val : current.getPossibleValues()) {
 			current.setValue(val);
 			if(this.check(current, val)) {
-				if(forwardCheck())
+				if(backtrack())
+					return true;
+			}
+		}
+		return false;
+					
+			
+	}
+	public boolean backtrackH() {
+		if(vars.isEmpty())
+			return true;
+		
+		Variable<D> current =this.h1(vars);
+		vars.remove(current);
+		for(D val : current.getPossibleValues()) {
+			current.setValue(h3(current));
+			if(this.check(current, val)) {
+				if(backtrack())
 					return true;
 			}
 		}
@@ -151,15 +168,17 @@ public class BinaryCSP<D> {
 			
 	}
 
+
 	/*public boolean ac3() {
 		
 	}
 
 	public boolean revise(BinaryConstraint<D> c) {
     }
-
+*/
 	public boolean forwardCheckAC3() {
-    }*/
+		return false;
+    }
 		
 	
 }
